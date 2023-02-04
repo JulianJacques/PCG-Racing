@@ -8,19 +8,25 @@ using Random = UnityEngine.Random;
 public class PCGGen : MonoBehaviour
 {
     [SerializeField] private GameObject roadtile;
-    private float tileSize = 10;
+    [SerializeField] private GameObject groundtile;
+    private float tileSize = 20;
 
     private GameObject[,] tiles = new GameObject[500,500];
     private int gridsize = 500;
 
+    private List<Vector3> path = new List<Vector3>();
+
+    [SerializeField]
+    private int length = 0;
+    
     // Start is called before the first frame update
     void Start()
     {
         Vector2Int HallwayStart = Vector2Int.zero;
-        Vector2Int Direction = RandomDirection();
+        Vector2Int Direction = Vector2Int.up;
         for (int i = 0; i < 10; i++)
         {
-            HallwayStart = SpawnHallway(HallwayStart, Direction,DieRoll(10));
+            HallwayStart = SpawnHallway(HallwayStart, Direction,DieRoll(10)+4);
             Vector2Int newDir = RandomDirection();
             
             while (newDir*-1 == Direction || newDir == Direction)
@@ -29,6 +35,19 @@ public class PCGGen : MonoBehaviour
             }
 
             Direction = newDir;
+        }
+
+        if (length < 40)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        
+        Debug.Log(length);
+        SpawnGround();
+
+        foreach (CarInputHandler carInputHandler in FindObjectsOfType<CarInputHandler>())
+        {
+            carInputHandler.setPath(path);
         }
     }
 
@@ -39,7 +58,14 @@ public class PCGGen : MonoBehaviour
         Vector2Int dir = RandomDirection();
         for (int i = 0; i < length; i++)
         {
-            SpawnTile(pos + (dir * i));
+            if (GetTile(pos + (dir * i)) == null)
+            {
+                SpawnTile(pos + (dir * i));
+            }
+            else
+            {
+                return pos + (dir * (i - 1));
+            }
         }
 
         return pos + dir * (length);
@@ -49,8 +75,16 @@ public class PCGGen : MonoBehaviour
     {
         for (int i = 0; i < length; i++)
         {
-            SpawnTile(pos + (dir * i));
+            if (GetTile(pos + (dir * i)) == null)
+            {
+                SpawnTile(pos + (dir * i));
+            }
+            else
+            {
+                return pos + (dir * (i - 1));
+            }
         }
+        
 
         return pos + dir * (length);
     }
@@ -79,6 +113,14 @@ public class PCGGen : MonoBehaviour
     {
         GameObject tile = Instantiate(roadtile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
         tiles[gridsize / 2 + x, gridsize / 2 - y] = tile;
+        length++;
+    }
+    
+    void SpawnTileGround(int x, int y)
+    {
+        GameObject tile = Instantiate(groundtile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
+        tiles[gridsize / 2 + x, gridsize / 2 - y] = tile;
+        //length++;
     }
     
     GameObject GetTile(Vector2Int pos)
@@ -90,6 +132,8 @@ public class PCGGen : MonoBehaviour
     {
         GameObject tile = Instantiate(roadtile, new Vector3(pos.x,pos.y,0)*tileSize, Quaternion.identity);
         tiles[gridsize / 2 + pos.x, gridsize / 2 - pos.y] = tile;
+        length++;
+        path.Add(new Vector3(pos.x,pos.y,0)*tileSize);
     }
 
 
@@ -99,11 +143,12 @@ public class PCGGen : MonoBehaviour
     
     Vector2Int RandomDirection()
     {
-        switch (DieRoll(4))
+        switch (DieRoll(3))
         {
             case 1: return Vector2Int.up;
             case 2: return Vector2Int.left;
             case 3: return Vector2Int.right;
+            
             case 4: return Vector2Int.down;
             default: return Vector2Int.up;
         }
@@ -116,6 +161,20 @@ public class PCGGen : MonoBehaviour
 
 
     #endregion
+
+    void SpawnGround()
+    {
+        for (int i = -50; i < 50; i++)
+        {
+            for (int j = -50; j < 50; j++)
+            {
+                if (GetTile(i, j) == null)
+                {
+                    SpawnTileGround(i,j);
+                }
+            }
+        }
+    }
 
     private void Update()
     {
