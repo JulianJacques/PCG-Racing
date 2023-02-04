@@ -252,11 +252,11 @@ MonoBehaviour:
   Cab: {fileID: 4409951511017403410}
   Nacelles:
   - Nacell: {fileID: 4409951511751271617}
-    Offset: {x: 2, y: 2.25, z: 0}
+    Offset: {x: 2, y: -2.25, z: 0}
     Connector: {fileID: 4409951511751271618}
     Cab: {fileID: 4409951511017403410}
   - Nacell: {fileID: 4409951510465038033}
-    Offset: {x: -2, y: 2.25, z: 0}
+    Offset: {x: -2, y: -2.25, z: 0}
     Connector: {fileID: 4409951510465038034}
     Cab: {fileID: 4409951511017403410}
 --- !u!1 &4409951511017403409
