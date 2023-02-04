@@ -7,9 +7,17 @@ public class PodRenderer : MonoBehaviour
     [Tooltip("Transform for the cockpit")]
     public Transform Cab;
 
-    public List<Necelle> Nacelles = new List<Necelle>(); 
+    public List<Necelle> Nacelles = new List<Necelle>();
 
+    private void Update()
+    {
+        foreach (Necelle item in Nacelles)
+        {
+            item.Cab = Cab;
+            item.UpdatePosition();
+        }
 
+    }
     private void OnDrawGizmos()
     {
         foreach (Necelle item in Nacelles)

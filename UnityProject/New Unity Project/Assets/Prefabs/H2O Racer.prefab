@@ -296,6 +296,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4409951510856209820}
   - component: {fileID: 850623433}
+  - component: {fileID: 419595412}
+  - component: {fileID: 419595413}
+  - component: {fileID: 419595414}
   m_Layer: 0
   m_Name: H2O Racer
   m_TagString: Untagged
@@ -343,6 +346,56 @@ MonoBehaviour:
     Offset: {x: -0.75, y: -1.25, z: 0}
     Connector: {fileID: 4409951510465038034}
     Cab: {fileID: 4409951511017403410}
+--- !u!50 &419595412
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4409951510856209811}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &419595413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4409951510856209811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b7f20e1cc6e7d41a7eb0e0cfbed023, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlType: 0
+--- !u!114 &419595414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4409951510856209811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee40be4343bf6940bd1d825e0e369c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  driftFactor: 0.95
+  accelerationFactor: 30
+  turnFactor: 3.5
+  maxSpeed: 20
 --- !u!1 &4409951511017403409
 GameObject:
   m_ObjectHideFlags: 0
