@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class PCGGen : MonoBehaviour
 {
@@ -14,9 +17,17 @@ public class PCGGen : MonoBehaviour
     void Start()
     {
         Vector2Int HallwayStart = Vector2Int.zero;
+        Vector2Int Direction = RandomDirection();
         for (int i = 0; i < 10; i++)
         {
-            HallwayStart = SpawnHallway(HallwayStart, DieRoll(20));
+            HallwayStart = SpawnHallway(HallwayStart, Direction,DieRoll(10));
+            Vector2Int newDir = RandomDirection();
+            while (newDir*-1 == Direction)
+            {
+                newDir = RandomDirection();
+            }
+
+            Direction = newDir;
         }
     }
 
@@ -32,12 +43,28 @@ public class PCGGen : MonoBehaviour
 
         return pos + dir * (length);
     }
+    
+    Vector2Int SpawnHallway(Vector2Int pos, Vector2Int dir, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            SpawnTile(pos + (dir * i));
+        }
+
+        return pos + dir * (length);
+    }
 
     
     Vector2Int SpawnHallway(int x, int y, int length)
     {
         Vector2Int pos = new Vector2Int(x, y);
         return SpawnHallway(pos, length);
+    }
+    
+    Vector2Int SpawnHallway(int x, int y, Vector2Int dir, int length)
+    {
+        Vector2Int pos = new Vector2Int(x, y);
+        return SpawnHallway(pos, dir, length);
     }
     #endregion
 
@@ -67,6 +94,8 @@ public class PCGGen : MonoBehaviour
 
     #endregion
 
+    #region HelperFunctionForRandom
+    
     Vector2Int RandomDirection()
     {
         switch (DieRoll(4))
@@ -84,4 +113,12 @@ public class PCGGen : MonoBehaviour
         return Random.Range(1, sides + 1);
     }
 
+
+    #endregion
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }
