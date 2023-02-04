@@ -31,7 +31,7 @@ public class Necelle
 
     public void UpdatePosition()
     {
-        Nacell.localPosition = Cab.position + Offset;
+        Nacell.localPosition = Cab.localPosition + Offset;
         
         Connector.SetPositions(new Vector3[] { Nacell.position, Cab.position });
     }
