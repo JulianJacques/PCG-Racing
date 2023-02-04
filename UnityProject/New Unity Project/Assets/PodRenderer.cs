@@ -46,32 +46,35 @@ public class PodRenderer : MonoBehaviour
 [System.Serializable]
 public class Necelle
 {
-    Rigidbody2D rb;
+    [Tooltip("Transform of nacelle")]
     public Transform Nacell;
+    [Tooltip("Offset from cab")]
     public Vector3 Offset;
-    public LineRenderer Connector;
-    Transform Cab;
 
-    //[Range(0, 1)]
+    [Range(0, 1)]
     public float Interpolate;
+
+    
+    LineRenderer Connector;
+    Transform Cab;
+    Rigidbody2D rb;
+
     Vector3 targetpos;
 
     public void InitiateNacelle(Transform cab)
     {
         Cab = cab;
+        Connector = Nacell.GetComponent<LineRenderer>();
         rb = Nacell.GetComponent<Rigidbody2D>();
     }
 
     public void DrawNacelle()
     {
-        //Nacell.position = targetpos;
-
         Connector.SetPositions(new Vector3[] { Nacell.position, Cab.position });
     }
     public void UpdatePosition()
     {
         targetpos = Vector3.Lerp(Nacell.position, Cab.position + (Offset.x * Cab.right) + (Offset.y * Cab.up), Interpolate);
         rb.MovePosition(targetpos);
-        Connector.SetPositions(new Vector3[] { Nacell.position, Cab.position });
     }
 }
