@@ -13,6 +13,7 @@ public class CarInputHandler : MonoBehaviour
     [SerializeField] private float closeRad;
     [SerializeField] [Range(0.1f,1.0f)]private float turnPower;
     private Queue<Vector3> path = new Queue<Vector3>();
+    private Vector3 target;
     
     
     public enum ControlType
@@ -85,16 +86,22 @@ public class CarInputHandler : MonoBehaviour
     void SmartAIUpdate()
     {
         //Get the next go to in the path
-        Vector3 target = path.Peek();
-
-        //Check if your close enough
-        if (isCloseEnough(target))
+        if (path.Count > 0)
         {
-            //If close enough pop the path
-            path.Dequeue();
             target = path.Peek();
+            
+            //Check if your close enough
+            if (isCloseEnough(target))
+            {
+                //If close enough pop the path
+                path.Dequeue();
+                if (path.Count > 0)
+                {
+                    target = path.Peek();
+                }
+            }
         }
-        
+
         Vector2 vectorToTarget = target - transform.position;
         vectorToTarget.Normalize();
 
@@ -102,7 +109,8 @@ public class CarInputHandler : MonoBehaviour
         float angleToTarget = Vector2.SignedAngle(transform.up, vectorToTarget);
         angleToTarget *= -1;
 
-        //We want the car to turn as much as possible if the angle is greater than 45 degrees and we wan't it to smooth out so if the angle is small we want the AI to make smaller corrections. 
+        //We want the car to turn as much as possible if the angle is greater than 45 degrees
+        //and we wan't it to smooth out so if the angle is small we want the AI to make smaller corrections. 
         float steerAmount = angleToTarget / 45.0f;
 
         //Clamp steering to between -1 and 1.
@@ -111,7 +119,7 @@ public class CarInputHandler : MonoBehaviour
         Vector2 inputVector = Vector2.zero;
 
         //Get input from Unity's input system.
-        inputVector.x = steerAmount;
+        inputVector.x = steerAmount *  Mathf.Lerp(0.8f,1.0f,Mathf.PerlinNoise(offsetForHor, Time.time));
         inputVector.y = Mathf.PerlinNoise(offsetForVer, Time.time);
 
         //Send the input to the car controller.

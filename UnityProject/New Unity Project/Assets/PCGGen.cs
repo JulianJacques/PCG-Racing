@@ -7,8 +7,10 @@ using Random = UnityEngine.Random;
 
 public class PCGGen : MonoBehaviour
 {
-    [SerializeField] private GameObject roadtile;
-    [SerializeField] private GameObject groundtile;
+    [SerializeField] private GameObject roadTile;
+    [SerializeField] private GameObject groundTile;
+    [SerializeField] private GameObject goalTile;
+    [SerializeField] private PCGStyle style;
     private float tileSize = 20;
 
     private GameObject[,] tiles = new GameObject[500,500];
@@ -23,11 +25,12 @@ public class PCGGen : MonoBehaviour
     void Start()
     {
         Vector2Int HallwayStart = Vector2Int.zero;
+        //Vector2Int Direction = RandomDirection(style.directions.GetValue());
         Vector2Int Direction = Vector2Int.up;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < style.lengthOfMap.GetValue(); i++)
         {
-            HallwayStart = SpawnHallway(HallwayStart, Direction,DieRoll(10)+4);
-            Vector2Int newDir = RandomDirection();
+            HallwayStart = SpawnHallway(HallwayStart, Direction,style.lengthOfHallway.GetValue());
+            Vector2Int newDir = RandomDirection(style.directions.GetValue());
             
             while (newDir*-1 == Direction || newDir == Direction)
             {
@@ -37,18 +40,24 @@ public class PCGGen : MonoBehaviour
             Direction = newDir;
         }
 
-        if (length < 40)
+        if (length < style.minTiles)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-        
-        Debug.Log(length);
-        SpawnGround();
 
+        SpawnTile(HallwayStart);
+        
         foreach (CarInputHandler carInputHandler in FindObjectsOfType<CarInputHandler>())
         {
             carInputHandler.setPath(path);
         }
+        
+        Vector3 goalPos = new Vector3(HallwayStart.x, HallwayStart.y, 0) * tileSize;
+        goalPos.z = -1;
+        Instantiate(goalTile, goalPos, Quaternion.identity);
+        
+        SpawnGround();
+        
     }
 
     #region HallwaySpawnFunctions
@@ -111,14 +120,14 @@ public class PCGGen : MonoBehaviour
     
     void SpawnTile(int x, int y)
     {
-        GameObject tile = Instantiate(roadtile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
+        GameObject tile = Instantiate(roadTile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
         tiles[gridsize / 2 + x, gridsize / 2 - y] = tile;
         length++;
     }
     
     void SpawnTileGround(int x, int y)
     {
-        GameObject tile = Instantiate(groundtile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
+        GameObject tile = Instantiate(groundTile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
         tiles[gridsize / 2 + x, gridsize / 2 - y] = tile;
         //length++;
     }
@@ -128,12 +137,13 @@ public class PCGGen : MonoBehaviour
         return tiles[gridsize / 2 + pos.x, gridsize / 2 - pos.y];
     }
     
-    void SpawnTile(Vector2Int pos)
+    GameObject SpawnTile(Vector2Int pos)
     {
-        GameObject tile = Instantiate(roadtile, new Vector3(pos.x,pos.y,0)*tileSize, Quaternion.identity);
+        GameObject tile = Instantiate(roadTile, new Vector3(pos.x,pos.y,0)*tileSize, Quaternion.identity);
         tiles[gridsize / 2 + pos.x, gridsize / 2 - pos.y] = tile;
         length++;
         path.Add(new Vector3(pos.x,pos.y,0)*tileSize);
+        return tile;
     }
 
 
@@ -144,6 +154,19 @@ public class PCGGen : MonoBehaviour
     Vector2Int RandomDirection()
     {
         switch (DieRoll(3))
+        {
+            case 1: return Vector2Int.up;
+            case 2: return Vector2Int.left;
+            case 3: return Vector2Int.right;
+            
+            case 4: return Vector2Int.down;
+            default: return Vector2Int.up;
+        }
+    }
+    
+    Vector2Int RandomDirection(int i)
+    {
+        switch (i)
         {
             case 1: return Vector2Int.up;
             case 2: return Vector2Int.left;
@@ -164,9 +187,9 @@ public class PCGGen : MonoBehaviour
 
     void SpawnGround()
     {
-        for (int i = -50; i < 50; i++)
+        for (int i = -125; i < 125; i++)
         {
-            for (int j = -50; j < 50; j++)
+            for (int j = -125; j < 125; j++)
             {
                 if (GetTile(i, j) == null)
                 {
