@@ -9,12 +9,25 @@ public class PodRenderer : MonoBehaviour
 
     public List<Necelle> Nacelles = new List<Necelle>();
 
-    private void Update()
+    public void Awake()
+    {
+        foreach (Necelle item in Nacelles)
+            item.InitiateNacelle(Cab);
+
+    }
+    private void FixedUpdate()
     {
         foreach (Necelle item in Nacelles)
         {
-            item.Cab = Cab;
             item.UpdatePosition();
+        }
+
+    }
+    private void LateUpdate()
+    {
+        foreach (Necelle item in Nacelles)
+        {
+            item.DrawNacelle();
         }
 
     }
@@ -22,7 +35,8 @@ public class PodRenderer : MonoBehaviour
     {
         foreach (Necelle item in Nacelles)
         {
-            item.Cab = Cab;
+            item.InitiateNacelle(Cab);
+
             item.UpdatePosition();
         }
     }
@@ -32,15 +46,32 @@ public class PodRenderer : MonoBehaviour
 [System.Serializable]
 public class Necelle
 {
+    Rigidbody2D rb;
     public Transform Nacell;
     public Vector3 Offset;
     public LineRenderer Connector;
-    [HideInInspector] public Transform Cab;
+    Transform Cab;
 
+    //[Range(0, 1)]
+    public float Interpolate;
+    Vector3 targetpos;
+
+    public void InitiateNacelle(Transform cab)
+    {
+        Cab = cab;
+        rb = Nacell.GetComponent<Rigidbody2D>();
+    }
+
+    public void DrawNacelle()
+    {
+        //Nacell.position = targetpos;
+
+        Connector.SetPositions(new Vector3[] { Nacell.position, Cab.position });
+    }
     public void UpdatePosition()
     {
-        Nacell.localPosition = Cab.localPosition + Offset;
-        
+        targetpos = Vector3.Lerp(Nacell.position, Cab.position + (Offset.x * Cab.right) + (Offset.y * Cab.up), Interpolate);
+        rb.MovePosition(targetpos);
         Connector.SetPositions(new Vector3[] { Nacell.position, Cab.position });
     }
 }
