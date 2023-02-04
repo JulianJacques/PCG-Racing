@@ -22,7 +22,8 @@ public class PCGGen : MonoBehaviour
         {
             HallwayStart = SpawnHallway(HallwayStart, Direction,DieRoll(10));
             Vector2Int newDir = RandomDirection();
-            while (newDir*-1 == Direction)
+            
+            while (newDir*-1 == Direction || newDir == Direction)
             {
                 newDir = RandomDirection();
             }
