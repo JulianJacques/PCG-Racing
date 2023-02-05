@@ -15,6 +15,7 @@ public class CarInputHandler : MonoBehaviour
     private Queue<Vector3> path = new Queue<Vector3>();
     private Vector3 target;
     private Vector3 startPos;
+    private bool isSleep = true;
     
     
     public enum ControlType
@@ -87,6 +88,19 @@ public class CarInputHandler : MonoBehaviour
     
     void SmartAIUpdate()
     {
+        if (isSleep)
+        {
+            if (Input.anyKey)
+            {
+                isSleep = false;
+            }
+            else
+            {
+                return;
+            }
+        }
+        
+        
         //Get the next go to in the path
         if (path.Count > 0)
         {
