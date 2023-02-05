@@ -16,6 +16,9 @@ public class CarInputHandler : MonoBehaviour
     private Vector3 target;
     private Vector3 startPos;
     private bool isSleep = true;
+
+    [SerializeField]
+    private List<GameObject> optionsOff;
     
     
     public enum ControlType
@@ -93,6 +96,10 @@ public class CarInputHandler : MonoBehaviour
             if (Input.anyKey)
             {
                 isSleep = false;
+                foreach (GameObject o in optionsOff)
+                {
+                    o.SetActive(false);
+                }
             }
             else
             {
