@@ -6,15 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class finishSquareBehavior : MonoBehaviour
 {
-   private float timer;
+   public static float timer;
 
-   private void Update()
+    private void Awake()
+    {
+        timer = 0f;
+    }
+    private void Update()
    {
+        Debug.Log(timer);
       timer += Time.deltaTime;
    }
 
    private void OnTriggerEnter2D(Collider2D col)
    {
-      FindObjectOfType<GameMaster>().WriteTime(timer);
+        Time.timeScale = 0;
+        FindObjectOfType<EndOfRaceScreen>().ToggleActive();
+      //FindObjectOfType<GameMaster>().WriteTime(timer);
    }
 }
