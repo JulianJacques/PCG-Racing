@@ -22,6 +22,11 @@ public class EndOfRaceScreen : MonoBehaviour
         Time.timeScale = 1;
         finishSquareBehavior.timer = 0;
         Player.position = StartPosition;
+        FindObjectOfType<PCGGen>().sendPathsToAI();
+        foreach(CarInputHandler cih in FindObjectsOfType<CarInputHandler>())
+        {
+            cih.SendToStart();
+        }
     }
     public void NewRace()
     {

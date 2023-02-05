@@ -14,6 +14,7 @@ public class CarInputHandler : MonoBehaviour
     [SerializeField] [Range(0.1f,1.0f)]private float turnPower;
     private Queue<Vector3> path = new Queue<Vector3>();
     private Vector3 target;
+    private Vector3 startPos;
     
     
     public enum ControlType
@@ -32,6 +33,7 @@ public class CarInputHandler : MonoBehaviour
         topDownCarController = GetComponent<CarController>();
         offsetForHor = Random.Range(0.0f, 10000.0f);
         offsetForVer = Random.Range(0.0f, 10000.0f);
+        startPos = transform.position;
     }
 
     // Start is called before the first frame update
@@ -137,5 +139,11 @@ public class CarInputHandler : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public void SendToStart()
+    {
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        transform.position = startPos;
     }
 }
