@@ -17,6 +17,7 @@ public class PCGGen : MonoBehaviour
     private int gridsize = 500;
 
     private List<Vector3> path = new List<Vector3>();
+    private List<Vector2Int> tileGridLocals = new List<Vector2Int>();
 
     [SerializeField]
     private int length = 0;
@@ -132,6 +133,15 @@ public class PCGGen : MonoBehaviour
         //length++;
     }
     
+    void SpawnTileGround(Vector2Int pos)
+    {
+        int x = pos.x;
+        int y = pos.y;
+        GameObject tile = Instantiate(groundTile, new Vector3(x,y,0)*tileSize, Quaternion.identity);
+        tiles[gridsize / 2 + x, gridsize / 2 - y] = tile;
+        //length++;
+    }
+    
     GameObject GetTile(Vector2Int pos)
     {
         return tiles[gridsize / 2 + pos.x, gridsize / 2 - pos.y];
@@ -143,6 +153,7 @@ public class PCGGen : MonoBehaviour
         tiles[gridsize / 2 + pos.x, gridsize / 2 - pos.y] = tile;
         length++;
         path.Add(new Vector3(pos.x,pos.y,0)*tileSize);
+        tileGridLocals.Add(pos);
         return tile;
     }
 
@@ -187,13 +198,26 @@ public class PCGGen : MonoBehaviour
 
     void SpawnGround()
     {
-        for (int i = -125; i < 125; i++)
+        List<Vector2Int> directionsToCheck = new List<Vector2Int>();
+        directionsToCheck.Add(Vector2Int.down);
+        directionsToCheck.Add(Vector2Int.up);
+        
+        directionsToCheck.Add(Vector2Int.left);
+        directionsToCheck.Add(Vector2Int.right);
+        
+        directionsToCheck.Add(Vector2Int.left + Vector2Int.up);
+        directionsToCheck.Add(Vector2Int.right + Vector2Int.up);
+        
+        directionsToCheck.Add(Vector2Int.left + Vector2Int.down);
+        directionsToCheck.Add(Vector2Int.right + Vector2Int.down);
+        
+        foreach (Vector2Int pos in tileGridLocals)
         {
-            for (int j = -125; j < 125; j++)
+            foreach (Vector2Int vec in directionsToCheck)
             {
-                if (GetTile(i, j) == null)
+                if (GetTile(vec + pos) == null)
                 {
-                    SpawnTileGround(i,j);
+                    SpawnTileGround(vec+pos);
                 }
             }
         }
